@@ -3,6 +3,7 @@ import type { HandleFunction } from '@workers/primitives';
 import type { Env } from './env';
 import { buildOrder, encodeOrder } from './order';
 import { CustomError, readBody } from './utils';
+import { webhookLog } from './webhook-log';
 
 const FRONTPAD_NEW_ORDER = 'https://app.frontpad.ru/api/index.php?new_order';
 
@@ -18,8 +19,9 @@ export const handle: HandleFunction<Env> = async (request, env) => {
 	}
 
 	let params: URLSearchParams;
+	let body: Record<string, unknown> = {};
 	try {
-		const body = await readBody(request);
+		body = await readBody(request);
 		if (field(body, 'test') === 'test') {
 			return new Response('ok', { status: StatusCodes.OK });
 		}
@@ -34,6 +36,8 @@ export const handle: HandleFunction<Env> = async (request, env) => {
 			});
 		}
 		throw error;
+	} finally {
+		await webhookLog(env.DB, JSON.stringify(body));
 	}
 
 	const frontpad = await fetch(FRONTPAD_NEW_ORDER, {

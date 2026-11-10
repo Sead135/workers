@@ -1,21 +1,26 @@
 {
-  "name": "@workers/tilda-to-frontpad",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
-  },
-  "main": "./src/index.ts",
-  "dependencies": {
-    "@workers/primitives": "workspace:*",
-    "http-status-codes": "^2.3.0"
-  },
-  "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250423.0",
-    "typescript": "^5.8.3",
-    "wrangler": "^4.12.1"
-  }
+	"name": "@workers/tilda-to-frontpad",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "wrangler dev",
+		"deploy": "wrangler deploy",
+		"typecheck": "tsc --noEmit -p tsconfig.json",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate:local": "wrangler d1 migrations apply integration-db --local",
+		"db:migrate:remote": "wrangler d1 migrations apply integration-db --remote"
+	},
+	"main": "./src/index.ts",
+	"dependencies": {
+		"@workers/primitives": "workspace:*",
+		"drizzle-orm": "^0.45.4",
+		"http-status-codes": "^2.3.0"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20250423.0",
+		"drizzle-kit": "^0.31.11",
+		"typescript": "^5.8.3",
+		"wrangler": "^4.12.1"
+	}
 }
