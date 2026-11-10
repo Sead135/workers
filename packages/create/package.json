@@ -1,0 +1,17 @@
+{
+  "name": "@workers/create",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "create-worker": "./src/cli.ts"
+  },
+  "scripts": {
+    "start": "node --experimental-strip-types ./src/cli.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.10",
+    "typescript": "^5.8.3"
+  }
+}

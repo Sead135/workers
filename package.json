@@ -1,0 +1,14 @@
+{
+  "name": "workers",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
+  "scripts": {
+    "create-worker": "pnpm --filter @workers/create start",
+    "typecheck": "pnpm -r run typecheck"
+  }
+}
