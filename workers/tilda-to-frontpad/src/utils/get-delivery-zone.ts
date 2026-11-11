@@ -7,7 +7,7 @@ export type Zone = {
 
 type GetDeliveryZoneType = {
   type: string;
-  amount: number;
+  subtotal: number;
   deliveryAmount: number;
 };
 
@@ -22,15 +22,15 @@ const DELIVERY_SKU_LIST: Record<number, number> = {
 
 export function getDeliveryZone({
   type,
-  amount,
+  subtotal,
   deliveryAmount
 }: GetDeliveryZoneType): Zone | null {
-  if (!type || amount === undefined || deliveryAmount === undefined) {
+  if (!type || subtotal === undefined || deliveryAmount === undefined) {
     return null;
   }
 
   if (normalize(type) === normalize('Доставка курьером')) {
-    if (amount >= 6000) {
+    if (subtotal >= 6000) {
       return { sku: '1010', kompotFirst: true };
     }
 

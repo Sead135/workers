@@ -42,7 +42,7 @@ export function buildOrder(
 
   const zone = getDeliveryZone({
     type: body['Способ_доставки'],
-    amount: Number(body.payment.amount),
+    subtotal: Number(body.payment.subtotal),
     deliveryAmount: body.payment.delivery_price
   });
   if (!zone) {
