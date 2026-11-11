@@ -2,23 +2,23 @@ import { StatusCodes } from 'http-status-codes';
 import type { JsonObject } from 'type-fest';
 import type { HandleFunction } from './handle-function.ts';
 
-export interface SSEHandleGenerator<E> {
+export type SSEHandleGenerator<E> = {
   (
     request: Request,
     env: E,
     context: ExecutionContext
   ): AsyncGenerator<SSEMessage>;
-}
+};
 
-export interface SSEEvent {
+export type SSEEvent = {
   id?: string;
   event?: string;
   data: JsonObject;
-}
+};
 
-export interface SSEComment {
+export type SSEComment = {
   comment: string;
-}
+};
 
 export type SSEMessage = SSEEvent | SSEComment;
 
@@ -31,8 +31,15 @@ export function withSSE<E>(
     context: ExecutionContext
   ): Promise<Response> {
     const stream = new TransformStream();
-    const running = run(handleGenerator, stream.writable, request, env, context);
+    const running = run(
+      handleGenerator,
+      stream.writable,
+      request,
+      env,
+      context
+    );
     context.waitUntil(running);
+
     return createResponse(stream.readable);
   };
 }
@@ -43,7 +50,7 @@ async function run<E>(
   request: Request,
   env: E,
   context: ExecutionContext
-): Promise<void> {
+) {
   const writer = writableStream.getWriter();
   try {
     for await (const message of handleGenerator(request, env, context)) {
@@ -61,14 +68,18 @@ function encodeMessage(message: SSEMessage): Uint8Array {
   if ('comment' in message) {
     lines.push(`: ${message.comment}`);
   } else {
-    if (message.id) lines.push(`id: ${message.id}`);
-    if (message.event) lines.push(`event: ${message.event}`);
+    if (message.id) {
+      lines.push(`id: ${message.id}`);
+    }
+    if (message.event) {
+      lines.push(`event: ${message.event}`);
+    }
     lines.push(`data: ${JSON.stringify(message.data)}`);
   }
   return textEncoder.encode(`${lines.join('\n')}\n\n`);
 }
 
-function createResponse(readableStream: ReadableStream): Response {
+function createResponse(readableStream: ReadableStream) {
   const headers = new Headers({
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',

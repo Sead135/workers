@@ -1,0 +1,40 @@
+{
+  "printWidth": 80,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "quoteProps": "as-needed",
+  "jsxSingleQuote": false,
+  "trailingComma": "none",
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "arrowParens": "always",
+  "endOfLine": "lf",
+  "parser": "babel-ts",
+  "embeddedLanguageFormatting": "auto",
+  "sortPackageJson": false,
+  "sortImports": {
+    "newlinesBetween": false,
+    "groups": ["builtin", "external", ["parent", "sibling", "index"], "unknown"]
+  },
+  "ignorePatterns": [
+    "**/*.md",
+    "**/static/**",
+    "**/dist/**",
+    "**/*.min.js",
+    "**/*.bundle.js",
+    "**/worker-configuration.d.ts",
+    "*.json",
+    "*.jsonc",
+    "node_modules/",
+    ".pnpm-store/",
+    ".cache/",
+    ".idea/",
+    ".claude/",
+    ".gitlab/",
+    "pnpm-lock.yaml",
+    "package-lock.json",
+    "yarn.lock"
+  ]
+}

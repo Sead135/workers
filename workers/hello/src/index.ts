@@ -1,5 +1,5 @@
-import { WorkerEntrypoint } from 'cloudflare:workers';
 import { withCatchThrown, withCORS } from '@workers/primitives';
+import { WorkerEntrypoint } from 'cloudflare:workers';
 import type { Env } from './env.ts';
 import { handle } from './handle.ts';
 

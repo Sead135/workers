@@ -1,0 +1,47 @@
+{
+  "plugins": ["unicorn", "typescript", "import"],
+  "ignorePatterns": [".pnpm-store/**"],
+  "env": {
+    "es2022": true,
+    "node": true
+  },
+  "rules": {
+    "typescript/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "typescript/no-explicit-any": "warn",
+    "typescript/ban-ts-comment": "warn",
+    "typescript/no-empty-object-type": "warn",
+    "typescript/no-namespace": "error",
+    "typescript/prefer-as-const": "error",
+    "typescript/prefer-nullish-coalescing": "error",
+    "typescript/consistent-type-imports": "warn",
+    "typescript/no-non-null-assertion": "error",
+    "no-else-return": "error",
+    "prefer-template": "error",
+    "import/no-cycle": "warn",
+    "import/no-duplicates": "error",
+    "import/no-self-import": "error",
+    "unicorn/prefer-module": "off",
+    "unicorn/prefer-optional-catch-binding": "error",
+    "unicorn/prefer-includes": "error",
+    "unicorn/prefer-string-starts-ends-with": "error",
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+    "no-script-url": "error",
+    "unicorn/no-new-buffer": "error"
+  }
+}

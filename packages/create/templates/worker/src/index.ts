@@ -1,7 +1,7 @@
-import { WorkerEntrypoint } from 'cloudflare:workers';
 import { withCatchThrown, withCORS } from '@workers/primitives';
-import type { Env } from './env.ts';
-import { handle } from './handle.ts';
+import { WorkerEntrypoint } from 'cloudflare:workers';
+import type { Env } from './env';
+import { handle } from './handle';
 
 export default class Entrypoint extends WorkerEntrypoint<Env> {
   async fetch(request: Request): Promise<Response> {

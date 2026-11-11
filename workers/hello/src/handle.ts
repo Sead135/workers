@@ -1,5 +1,5 @@
-import { StatusCodes } from 'http-status-codes';
 import type { HandleFunction } from '@workers/primitives';
+import { StatusCodes } from 'http-status-codes';
 import type { Env } from './env.ts';
 
 export const handle: HandleFunction<Env> = async (request) => {
