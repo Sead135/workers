@@ -12,7 +12,7 @@ export function withCORS<E>(
   { allowedOrigin, allowedMethods, allowedHeaders }: CORSOptions
 ): HandleFunction<E> {
   function patchResponse(request: Request, response: Response): Response {
-    const headers = new Headers(response.headers);
+    const headers = new Headers(response?.headers);
     headers.set('Access-Control-Max-Age', '3600');
     headers.set(
       'Access-Control-Allow-Origin',
@@ -30,9 +30,9 @@ export function withCORS<E>(
         getOptionValue(allowedHeaders, request).join(',')
       );
     }
-    return new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
+    return new Response(response?.body, {
+      status: response?.status ?? StatusCodes.BAD_REQUEST,
+      statusText: response?.statusText,
       headers
     });
   }

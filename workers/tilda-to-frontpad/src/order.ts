@@ -1,4 +1,5 @@
-import { CustomError } from './utils';
+import type { OrderWebhookPayload } from './types';
+import { CustomError, getDeliveryZone, type Zone } from './utils';
 
 export type CartLine = {
   sku: string;
@@ -17,24 +18,6 @@ export type FrontpadOrder = {
 
 const KOMPOT_SKU = '067';
 
-type Zone = {
-  pickup?: boolean;
-  sku?: string;
-  /** Бесплатная доставка в сценарии идёт после компота. */
-  kompotFirst?: boolean;
-};
-
-const ZONES: Record<string, Zone> = {
-  'Самовывоз (Стасова 169/1)': { pickup: true },
-  'Платная доставка в радиусе 2 км (250 ₽) = 250': { sku: '1007' },
-  'Платная доставка в радиусе 8 км (400 ₽) = 400': { sku: '1009' },
-  'Платная доставка в радиусе 12 км (500 ₽) = 500': { sku: '1008' },
-  'Доставка в радиусе дальше 12 км - по тарифу Яндекс такси': { sku: '088' },
-  'Бесплатная доставка при заказе от 5 тыс. руб. в радиусе 8 км от Стасова 169/1':
-    { sku: '1010', kompotFirst: true },
-  'Абонемент на месяц - 25 000 руб.': { sku: '1011' }
-};
-
 /** 0 / 1 / 2 / 3 компота на <3 / 3–5 / 6–8 / 9+ позиций корзины. */
 export function kompotQuantity(productCount: number) {
   if (productCount < 3) {
@@ -50,18 +33,23 @@ export function kompotQuantity(productCount: number) {
 }
 
 export function buildOrder(
-  body: Record<string, unknown>,
+  body: OrderWebhookPayload,
   secretFromEnv?: string
 ): FrontpadOrder {
-  const secret = secretFromEnv || field(body, 'secret');
-  if (!secret) {
+  if (!secretFromEnv) {
     throw new CustomError('Не задан secret Frontpad', 500);
   }
 
-  const zoneName = field(body, 'rajon_2');
-  const zone = ZONES[zoneName];
+  const zone = getDeliveryZone({
+    type: body['Способ_доставки'],
+    amount: Number(body.payment.amount),
+    deliveryAmount: body.payment.delivery_price
+  });
   if (!zone) {
-    throw new CustomError(`Неизвестный rajon_2: ${zoneName || 'пусто'}`, 400);
+    throw new CustomError(
+      `Неизвестный способ доставки: ${body['Способ_доставки'] || 'пусто'}`,
+      400
+    );
   }
 
   const cart = cartLines(body);
@@ -70,22 +58,17 @@ export function buildOrder(
     throw new CustomError('В заказе нет товаров', 400);
   }
 
-  const date = field(body, 'Date', 'date');
-  const comment = field(body, 'comment');
-  const rajon = field(body, 'rajon');
-  const descr = [
-    `Тара - ${rajon}.`,
-    zone.pickup ? 'Доставка - Самовывоз.' : '',
-    comment
-  ]
+  const date = body.Date;
+  const comment = body.comment;
+  const descr = [zone.pickup ? 'Доставка - Самовывоз.' : '', comment]
     .filter(Boolean)
     .join('\n');
 
   return {
-    secret,
-    street: field(body, 'street'),
-    name: field(body, 'Name', 'name'),
-    phone: field(body, 'Phone', 'phone'),
+    secret: secretFromEnv,
+    street: body['Адрес_доставки'],
+    name: body['Имя'],
+    phone: body['Телефон'],
     descr,
     datetime: date ? `${date} 13:00:00` : '',
     products
@@ -173,17 +156,4 @@ function cartLines(body: Record<string, unknown>): CartLine[] {
   return payment.products
     .map(toCartLine)
     .filter((line): line is CartLine => line !== null);
-}
-
-function field(body: Record<string, unknown>, ...keys: string[]) {
-  for (const key of keys) {
-    const value = body[key];
-    if (typeof value === 'string') {
-      return value.trim();
-    }
-    if (typeof value === 'number') {
-      return String(value);
-    }
-  }
-  return '';
 }

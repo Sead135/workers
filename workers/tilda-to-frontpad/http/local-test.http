@@ -1,0 +1,49 @@
+POST http://localhost:8787
+Content-Type: application/json
+
+{
+  "Имя": "Тест",
+  "Телефон": "+7 (999) 999-99-99",
+  "Способ_доставки": "Доставка курьером",
+  "Адрес_доставки": "г Краснодар, ул 1-го Мая, д 188",
+  "Этаж": "10",
+  "Подъезд": "2",
+  "Номер_квартиры": "1038",
+  "food-container": "Доставка в кастрюлях",
+  "Date": "2026-11-11",
+  "interval": "с 13:00 до 18:00",
+  "comment": "Тестовый заказ",
+  "Checkbox": "yes",
+  "payment": {
+    "sys": "none",
+    "systranid": "0",
+    "orderid": "1823949401",
+    "products": [
+      {
+        "name": "Котлеты из курицы с зеленью запеченные",
+        "quantity": 1,
+        "amount": 1290,
+        "externalid": "XOt8s5umx9koLjBOKajj",
+        "price": "1290",
+        "sku": "071"
+      },
+      {
+        "name": "Компот из сухофруктов",
+        "quantity": 1,
+        "amount": 300,
+        "externalid": "A19xy8C8soYJ0sjd0HgX",
+        "price": "300",
+        "sku": "066"
+      }
+    ],
+    "amount": "1990",
+    "subtotal": "1590",
+    "delivery": "Доставка курьером",
+    "delivery_price": 400,
+    "delivery_fio": "",
+    "delivery_address": "",
+    "delivery_comment": ""
+  },
+  "formid": "form2386688091",
+  "formname": "Cart"
+}

@@ -1,20 +1,20 @@
 {
-	"name": "tilda-to-frontpad",
-	"main": "src/index.ts",
-	"compatibility_date": "2025-04-01",
-	"compatibility_flags": ["nodejs_compat"],
-	"observability": {
-		"logs": {
-			"enabled": false,
-			"invocation_logs": true
-		}
-	},
-	"d1_databases": [
-		{
-			"binding": "DB",
-			"database_name": "app-db",
-			"database_id": "336ebd31-675e-4d84-8e5f-b4978ffb2748",
-			"migrations_dir": "drizzle"
-		}
-	]
+  "name": "tilda-to-frontpad",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "logs": {
+      "enabled": false,
+      "invocation_logs": true
+    }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "app-db",
+      "database_id": "336ebd31-675e-4d84-8e5f-b4978ffb2748",
+      "migrations_dir": "drizzle"
+    }
+  ]
 }

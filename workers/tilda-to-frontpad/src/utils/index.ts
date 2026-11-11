@@ -1,2 +1,2 @@
 export * from './custom-error';
-export * from './read-body';
+export * from './get-delivery-zone';

@@ -2,7 +2,8 @@ import type { HandleFunction } from '@workers/primitives';
 import { StatusCodes } from 'http-status-codes';
 import type { Env } from './env';
 import { buildOrder, encodeOrder } from './order';
-import { CustomError, readBody } from './utils';
+import type { WebhookPayload } from './types';
+import { CustomError } from './utils';
 import { webhookLog } from './webhook-log';
 
 const FRONTPAD_NEW_ORDER = 'https://app.frontpad.ru/api/index.php?new_order';
@@ -19,13 +20,14 @@ export const handle: HandleFunction<Env> = async (request, env) => {
   }
 
   let params: URLSearchParams;
-  let body: Record<string, unknown> = {};
+  let body = {} as WebhookPayload;
   try {
-    body = await readBody(request);
-    if (field(body, 'test') === 'test') {
+    body = await request.json();
+    if (body.test === 'test') {
       return new Response('ok', { status: StatusCodes.OK });
     }
-    params = encodeOrder(buildOrder(body, env.FRONTPAD_SECRET));
+    const order = buildOrder(body, env.FRONTPAD_SECRET);
+    params = encodeOrder(order);
   } catch (error) {
     if (error instanceof CustomError) {
       return new Response(error.message, { status: error.status });
@@ -54,8 +56,3 @@ export const handle: HandleFunction<Env> = async (request, env) => {
     headers: { 'content-type': 'text/plain; charset=utf-8' }
   });
 };
-
-function field(body: Record<string, unknown>, key: string): string {
-  const value = body[key];
-  return typeof value === 'string' ? value.trim() : '';
-}
