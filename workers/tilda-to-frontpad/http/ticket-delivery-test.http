@@ -1,0 +1,41 @@
+POST http://localhost:8787
+Content-Type: application/json
+
+{
+  "Имя": "Тест",
+  "Телефон": "+7 (999) 999-99-99",
+  "Способ_доставки": "Доставка по абонементу",
+  "Адрес_доставки_абонемент": "1 мая 188",
+  "Этаж_абонемент": "10",
+  "Подъезд_абонемент": "2",
+  "Номер_квартиры_абонемент": "1038",
+  "food-container": "Доставка в кастрюлях",
+  "Date": "2026-11-13",
+  "interval": "с 13:00 до 18:00",
+  "comment": "тестовый заказ\nдоставка по абонементу",
+  "Checkbox": "yes",
+  "payment": {
+    "sys": "none",
+    "systranid": "0",
+    "orderid": "1187000371",
+    "products": [
+      {
+        "name": "Красный борщ с говядиной",
+        "quantity": 1,
+        "amount": 790,
+        "externalid": "NCSghBpoTxepoaTKnoUT",
+        "price": "790",
+        "sku": "092"
+      }
+    ],
+    "amount": "790",
+    "subtotal": "790",
+    "delivery": "Доставка по абонементу",
+    "delivery_price": 0,
+    "delivery_fio": "",
+    "delivery_address": "",
+    "delivery_comment": ""
+  },
+  "formid": "form2386688091",
+  "formname": "Cart"
+}

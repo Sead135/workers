@@ -9,6 +9,10 @@ export type CartLine = {
 export type FrontpadOrder = {
   secret: string;
   street: string;
+  home?: string;
+  pod?: string;
+  et?: string;
+  apart?: string;
   name: string;
   phone: string;
   descr: string;
@@ -63,10 +67,15 @@ export function buildOrder(
   const descr = [zone.pickup ? 'Доставка - Самовывоз.' : '', comment]
     .filter(Boolean)
     .join('\n');
+  const street =
+    body['Адрес_доставки'] ?? body['Адрес_доставки_абонемент'] ?? '';
 
   return {
     secret: secretFromEnv,
-    street: body['Адрес_доставки'],
+    street,
+    pod: body['Подъезд'],
+    et: body['Этаж'],
+    apart: body['Номер_квартиры'],
     name: body['Имя'],
     phone: body['Телефон'],
     descr,
@@ -84,9 +93,12 @@ export function encodeOrder(order: FrontpadOrder): URLSearchParams {
     descr: order.descr
   });
 
-  if (order.datetime) {
-    params.set('datetime', order.datetime);
-  }
+  (['pod', 'et', 'apart', 'datetime'] as const).forEach((param) => {
+    const value = order[param];
+    if (value) {
+      params.set(param, value);
+    }
+  });
 
   order.products.forEach((line, index) => {
     params.set(`product[${index}]`, line.sku);

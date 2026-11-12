@@ -29,7 +29,8 @@ export type OrderWebhookPayload = {
   Имя: string;
   Телефон: string;
   Способ_доставки: string;
-  Адрес_доставки: string;
+  Адрес_доставки?: string;
+  Адрес_доставки_абонемент?: string;
   Этаж: string;
   Подъезд: string;
   Номер_квартиры: string;
