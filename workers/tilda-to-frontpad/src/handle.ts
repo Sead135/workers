@@ -2,11 +2,9 @@ import type { HandleFunction } from '@workers/primitives';
 import { StatusCodes } from 'http-status-codes';
 import type { Env } from './env';
 import { buildOrder, encodeOrder } from './order';
-import type { WebhookPayload } from './types';
-import { CustomError } from './utils';
-import { webhookLog } from './webhook-log';
-
-const FRONTPAD_NEW_ORDER = 'https://app.frontpad.ru/api/index.php?new_order';
+import type { WebhookPayload, WebhookStatus } from './types';
+import { CustomError, sendFrontpad } from './utils';
+import { updateWebhookLogStatus, webhookLog } from './webhook-log';
 
 export const handle: HandleFunction<Env> = async (request, env) => {
   if (request.method === 'GET') {
@@ -19,40 +17,54 @@ export const handle: HandleFunction<Env> = async (request, env) => {
     });
   }
 
+  function updateLogStatus(logId: number, status: WebhookStatus) {
+    return updateWebhookLogStatus(env.DB, logId, status);
+  }
+
   let params: URLSearchParams;
   let body = {} as WebhookPayload;
+  let logId: number | undefined;
   try {
     body = await request.json();
+    logId = await webhookLog(env.DB, JSON.stringify(body));
+
     if (body.test === 'test') {
+      await updateLogStatus(logId, 'success');
       return new Response('ok', { status: StatusCodes.OK });
     }
+
     const order = buildOrder(body, env.FRONTPAD_SECRET);
     params = encodeOrder(order);
   } catch (error) {
+    if (logId !== undefined) {
+      await updateLogStatus(logId, 'failed');
+    }
+
     if (error instanceof CustomError) {
       return new Response(error.message, { status: error.status });
     }
+
     if (error instanceof SyntaxError) {
       return new Response('Невалидный JSON', {
         status: StatusCodes.BAD_REQUEST
       });
     }
+
     throw error;
-  } finally {
-    await webhookLog(env.DB, JSON.stringify(body));
   }
 
-  const frontpad = await fetch(FRONTPAD_NEW_ORDER, {
-    method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: params
-  });
+  try {
+    const { success, text } = await sendFrontpad(params);
 
-  const text = await frontpad.text();
-  const failed =
-    !frontpad.ok || /result=error|"result"\s*:\s*"error"/.test(text);
-  return new Response(text, {
-    status: failed ? StatusCodes.BAD_GATEWAY : StatusCodes.OK,
-    headers: { 'content-type': 'text/plain; charset=utf-8' }
-  });
+    await updateLogStatus(logId, success ? 'success' : 'failed');
+
+    return new Response(text, {
+      status: success ? StatusCodes.OK : StatusCodes.BAD_GATEWAY,
+      headers: { 'content-type': 'text/plain; charset=utf-8' }
+    });
+  } catch (error) {
+    await updateLogStatus(logId, 'failed');
+
+    throw error;
+  }
 };

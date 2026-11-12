@@ -12,20 +12,20 @@ Content-Type: application/json
   "food-container": "Доставка в кастрюлях",
   "Date": "2026-11-13",
   "interval": "с 13:00 до 18:00",
-  "comment": "тестовый заказ\nдоставка по абонементу",
+  "comment": "Тестовый заказ абонент",
   "Checkbox": "yes",
   "payment": {
     "sys": "none",
     "systranid": "0",
-    "orderid": "1187000371",
+    "orderid": "1383481141",
     "products": [
       {
-        "name": "Красный борщ с говядиной",
+        "name": "Суп с куриными фрикадельками",
         "quantity": 1,
         "amount": 790,
-        "externalid": "NCSghBpoTxepoaTKnoUT",
+        "externalid": "MsOA3I6vN9UaDjUELlmS",
         "price": "790",
-        "sku": "092"
+        "sku": "1004"
       }
     ],
     "amount": "790",

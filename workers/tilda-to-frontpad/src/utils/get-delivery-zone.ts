@@ -1,3 +1,6 @@
+const TICKET_DELIVERY_LABEL = 'Доставка по абонементу';
+const DELIVERY_LABEL = 'Доставка курьером';
+
 export type Zone = {
   pickup?: boolean;
   sku?: string;
@@ -16,8 +19,7 @@ const DELIVERY_SKU_LIST: Record<number, number> = {
   250: 1007,
   400: 1008,
   550: 1009,
-  800: 1112,
-  0: 1011
+  800: 1112
 };
 
 export function getDeliveryZone({
@@ -29,7 +31,7 @@ export function getDeliveryZone({
     return null;
   }
 
-  if (normalize(type) === normalize('Доставка курьером')) {
+  if (normalize(type) === normalize(DELIVERY_LABEL)) {
     if (subtotal >= 6000) {
       return { sku: '1010', kompotFirst: true };
     }
@@ -38,6 +40,10 @@ export function getDeliveryZone({
     if (sku) {
       return { sku: sku.toString() };
     }
+  }
+
+  if (normalize(type) === normalize(TICKET_DELIVERY_LABEL)) {
+    return { sku: '1011' };
   }
 
   return { pickup: true };

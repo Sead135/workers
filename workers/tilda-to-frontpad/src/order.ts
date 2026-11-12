@@ -1,5 +1,5 @@
 import type { OrderWebhookPayload } from './types';
-import { CustomError, getDeliveryZone, type Zone } from './utils';
+import { CustomError, getAddress, getDeliveryZone, type Zone } from './utils';
 
 export type CartLine = {
   sku: string;
@@ -67,15 +67,11 @@ export function buildOrder(
   const descr = [zone.pickup ? 'Доставка - Самовывоз.' : '', comment]
     .filter(Boolean)
     .join('\n');
-  const street =
-    body['Адрес_доставки'] ?? body['Адрес_доставки_абонемент'] ?? '';
+  const address = getAddress(body);
 
   return {
     secret: secretFromEnv,
-    street,
-    pod: body['Подъезд'],
-    et: body['Этаж'],
-    apart: body['Номер_квартиры'],
+    ...address,
     name: body['Имя'],
     phone: body['Телефон'],
     descr,

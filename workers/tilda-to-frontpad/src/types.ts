@@ -31,9 +31,12 @@ export type OrderWebhookPayload = {
   Способ_доставки: string;
   Адрес_доставки?: string;
   Адрес_доставки_абонемент?: string;
-  Этаж: string;
-  Подъезд: string;
-  Номер_квартиры: string;
+  Этаж?: string;
+  Этаж_абонемент?: string;
+  Подъезд?: string;
+  Подъезд_абонемент?: string;
+  Номер_квартиры?: string;
+  Номер_квартиры_абонемент?: string;
   'food-container': string;
   Date: string;
   interval: string;
@@ -46,3 +49,13 @@ export type OrderWebhookPayload = {
 };
 
 export type WebhookPayload = OrderWebhookPayload | TestWebhookPayload;
+
+export const WEBHOOK_STATUS = {
+  PENDING: 'pending',
+  SUCCESS: 'success',
+  FAILED: 'failed',
+  UNKNOWN: 'unknown'
+} as const;
+
+export type WebhookStatus =
+  (typeof WEBHOOK_STATUS)[keyof typeof WEBHOOK_STATUS];
