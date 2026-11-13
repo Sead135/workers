@@ -71,11 +71,17 @@ export function buildOrder(
     .join('\n');
   const address = getAddress(body);
   const addressDetails = formatAddressDetails(address);
-  const street = [address.street, addressDetails && `(${addressDetails})`]
+  const street = [address.street, addressDetails]
     .filter(Boolean)
     .join(' ');
-  const now = new Date();
-  const currentTime = `${now.getHours()}:${pad2(now.getMinutes())}:${pad2(now.getSeconds())}`;
+  const currentTime = new Intl.DateTimeFormat('ru-RU', {
+    timeZone: 'Europe/Moscow',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23'
+  }).format(new Date());
+
   const datetime = date ? `${date} ${currentTime}` : '';
 
   return {
@@ -97,10 +103,6 @@ function formatAddressDetails(address: Address) {
   ]
     .filter(Boolean)
     .join(', ');
-}
-
-function pad2(value: string | number) {
-  return String(value).padStart(2, '0');
 }
 
 export function encodeOrder(order: FrontpadOrder): URLSearchParams {

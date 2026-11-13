@@ -18,7 +18,6 @@ export async function webhookLog(binding: D1Database, payload: string) {
     sql`${webhookLogs.id} NOT IN (
         SELECT id
         FROM ${webhookLogs}
-        WHERE status = 'pending'
         ORDER BY id DESC
         LIMIT 300
       )`
