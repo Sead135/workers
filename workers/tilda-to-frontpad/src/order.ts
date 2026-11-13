@@ -1,5 +1,11 @@
 import type { OrderWebhookPayload } from './types';
-import { CustomError, getAddress, getDeliveryZone, type Zone } from './utils';
+import {
+  type Address,
+  CustomError,
+  getAddress,
+  getDeliveryZone,
+  type Zone
+} from './utils';
 
 export type CartLine = {
   sku: string;
@@ -9,14 +15,10 @@ export type CartLine = {
 export type FrontpadOrder = {
   secret: string;
   street: string;
-  home?: string;
-  pod?: string;
-  et?: string;
-  apart?: string;
   name: string;
   phone: string;
   descr: string;
-  // datetime: string;
+  datetime: string;
   products: CartLine[];
 };
 
@@ -62,22 +64,43 @@ export function buildOrder(
     throw new CustomError('В заказе нет товаров', 400);
   }
 
-  // const date = body.Date;
+  const date = body.Date;
   const comment = body.comment;
   const descr = [zone.pickup ? 'Доставка - Самовывоз.' : '', comment]
     .filter(Boolean)
     .join('\n');
   const address = getAddress(body);
+  const addressDetails = formatAddressDetails(address);
+  const street = [address.street, addressDetails && `(${addressDetails})`]
+    .filter(Boolean)
+    .join(' ');
+  const now = new Date();
+  const currentTime = `${now.getHours()}:${pad2(now.getMinutes())}:${pad2(now.getSeconds())}`;
+  const datetime = date ? `${date} ${currentTime}` : '';
 
   return {
     secret: secretFromEnv,
-    ...address,
+    street,
     name: body['Имя'],
     phone: body['Телефон'],
     descr,
-    // datetime: date ? `${date} 13:00:00` : '',
+    datetime,
     products
   };
+}
+
+function formatAddressDetails(address: Address) {
+  return [
+    address.pod && `под: ${address.pod}`,
+    address.et && `эт: ${address.et}`,
+    address.apart && `кв: ${address.apart}`
+  ]
+    .filter(Boolean)
+    .join(', ');
+}
+
+function pad2(value: string | number) {
+  return String(value).padStart(2, '0');
 }
 
 export function encodeOrder(order: FrontpadOrder): URLSearchParams {
@@ -89,12 +112,9 @@ export function encodeOrder(order: FrontpadOrder): URLSearchParams {
     descr: order.descr
   });
 
-  (['pod', 'et', 'apart'] as const).forEach((param) => {
-    const value = order[param];
-    if (value) {
-      params.set(param, value);
-    }
-  });
+  if (order.datetime) {
+    params.set('datetime', order.datetime);
+  }
 
   order.products.forEach((line, index) => {
     params.set(`product[${index}]`, line.sku);

@@ -1,6 +1,13 @@
 import type { OrderWebhookPayload } from '../types';
 
-export function getAddress(body: OrderWebhookPayload) {
+export type Address = {
+  street: string;
+  pod?: string;
+  et?: string;
+  apart?: string;
+};
+
+export function getAddress(body: OrderWebhookPayload): Address {
   const isTicket = !!body['Адрес_доставки_абонемент'];
 
   if (isTicket) {
